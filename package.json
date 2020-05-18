@@ -1,5 +1,5 @@
 {
-  "name": "my-boilerplate",
+  "name": "modern-boilerplate",
   "version": "1.0.0",
   "scripts": {
     "start": "node dist/server",
