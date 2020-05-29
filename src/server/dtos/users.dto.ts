@@ -27,3 +27,7 @@ export class LogoutUserDTO{
   @IsEmail()
   public email: string;
 }
+
+export class GetUserDTO {
+  public id : string;
+}

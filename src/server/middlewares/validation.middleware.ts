@@ -8,13 +8,17 @@ export default function validationMiddleware(type: any, skipMissingProperties = 
   return (req: ApiRequest, res: ApiResponse, next: NextFunction) => {
 
     let source: any;
-    if (req.body === undefined || Object.keys(req.body).length === 0)
-      source = req.params;
-    else
+    if (req.body === undefined || Object.keys(req.body).length === 0) {
+      source = req.query;
+      console.log(req.query);
+    }
+    else {
       source = req.body;
-
+      console.log(req.body);
+    }
     const inputObject = plainToClass(type, source);
-    
+    console.log(inputObject);
+
     validate(inputObject, { skipMissingProperties })
       .then((errors: ValidationError[]) => {
         if (errors.length > 0) {
