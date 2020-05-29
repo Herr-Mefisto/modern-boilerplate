@@ -7,44 +7,55 @@ import * as logger from 'morgan';
 import Route from './interfaces/routes.interface';
 import errorMiddleware from './middlewares/error.middleware';
 import { environment } from './environment';
-
+import "reflect-metadata";
+import authMiddleware from './middlewares/auth.middleware';
 class App {
   public app: express.Application;
-  public port: number|string;
+  public port: number | string;
   public env: boolean;
 
-  constructor(routes: Route[]){
+  constructor(routes: Route[]) {
     this.app = express();
     this.port = environment.port;
-    this.env = environment.type === 'production' ? true: false;
+    this.env = environment.type === 'production' ? true : false;
 
     this.initializeMiddlewares();
     this.initializeRoutes(routes);
     this.initializeSwagger();
     this.initializeErrorHandling();
-  }  
-  public listen(){
-    this.app.listen(this.port, ()=>{
+  }
+  public listen() {
+    this.app.listen(this.port, () => {
       console.log(`Server app listening on the port ${this.port}`);
     })
   }
 
-  public getServer(){
+  public getServer() {
     return this.app;
   }
 
-  private initializeRoutes(routes: Route[]){
-    routes.forEach((route)=>{
-      const routePath = route.path ? route.path : ''; 
+  private initializeRoutes(routes: Route[]) {
+    const routesWithAuthorization = routes.filter((route: Route) => route.needsAuthorization);
+    const routesWithoutAuthorization = routes.filter((route: Route) => !route.needsAuthorization);
+
+    routesWithoutAuthorization.forEach((route) => {
+      const routePath = route.path ? route.path : '';
+      this.app.use(`/api/${routePath}`, route.router);
+    });
+
+    this.app.use(authMiddleware);
+
+    routesWithAuthorization.forEach((route) => {
+      const routePath = route.path ? route.path : '';
       this.app.use(`/api/${routePath}`, route.router);
     });
   }
-  
-  private initializeErrorHandling(){
+
+  private initializeErrorHandling() {
     this.app.use(errorMiddleware);
   }
 
-  private initializeMiddlewares(){
+  private initializeMiddlewares() {
     if (this.env) {
       this.app.use(hpp());
       this.app.use(helmet());

@@ -1,34 +1,21 @@
 import { NextFunction, Request, Response } from 'express';
-import { CreateUserDTO, LoginUserDTO } from '../dtos/users.dto';
-import AuthService from '../services/auth.service';
+import { CreateUserDTO, LoginUserDTO, LogoutUserDTO } from '../dtos/users.dto';
 import { User } from '../interfaces/users.interface';
 
+export default class AuthController {
 
-export default class AuthController{
-
-  private authService :AuthService;
-
-  constructor(){
-    this.authService  = new AuthService();
+  public signUp = async (input: Partial<CreateUserDTO>): Promise<void> => {
+    return new Promise(res => {
+      console.log(input);
+      res();
+    });
   }
 
-  public signUp = async (req: Request, res: Response, next : NextFunction) =>{
-    const userDTO :CreateUserDTO = req.body;
-
-    try{
-      const user: User = await this.authService.signUp(userDTO);
-      res.json(user);
-    }
-    catch(error){
-      next(error);
-    }
-  }
-
-  public logIn = async (req: Request, res: Response, next : NextFunction) =>{
+  public logIn = async (input: Partial<LoginUserDTO>) => {
 
   }
 
-  public logOut = async (req: Request, res: Response, next : NextFunction) =>{
+  public logOut = async (input: Partial<LogoutUserDTO>) => {
 
   }
 }

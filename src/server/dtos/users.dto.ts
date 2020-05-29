@@ -21,3 +21,9 @@ export class LoginUserDTO {
   @IsString()
   public password: string;
 }
+
+
+export class LogoutUserDTO{
+  @IsEmail()
+  public email: string;
+}
